@@ -12,8 +12,8 @@ This project is built using **Next.js 14.2.23** and **Tailwind CSS 3**. It lever
 To get started with the project, clone the repository and install dependencies:
 
 ```bash
-git clone <repository-url>
-cd <project-folder>
+git clone https://github.com/NatanaelAlexander/chatbotia.git
+cd chatbotia
 npm install
 
 ## Development
