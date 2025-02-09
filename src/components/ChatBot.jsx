@@ -5,6 +5,7 @@ import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { useState, useEffect, useRef } from "react";
 import Mensaje from "./Mensaje";
 import { Hourglass } from 'react-loader-spinner'
+import { Oval } from 'react-loader-spinner'
 /* La IA */
 import { MLCEngine } from "@mlc-ai/web-llm";
 
@@ -13,10 +14,14 @@ const ChatBot = ({ closeModal }) => {
     const [mensaje, setMensaje] = useState("");
     const [error, setError] = useState("");
     const mensajesEndRef = useRef(null);
-    const textareaRef = useRef(null);  // Referencia para el textarea
+    const textareaRef = useRef(null);
     const [loader, setLoader] = useState(false);
     const [engine, setEngine] = useState()
     const [model, setModel] = useState()
+
+    const [downloadModel, setDownloadModel] = useState(true);
+    const downloadMessage = useRef(null);
+
     const [mensajes, setMensajes] = useState([
         { text: "Hola, ¿en qué puedo ayudarte?", quienEnvia: "Bot" }
     ]);
@@ -27,18 +32,22 @@ const ChatBot = ({ closeModal }) => {
 
     const modelIa = async () => {
         try {
-            setLoader(true)
+            setDownloadModel(true)
             setModel('gemma-2b-it-q4f32_1-MLC');
             const engineInstance = new MLCEngine();
             setEngine(engineInstance);
-            engineInstance.setInitProgressCallback(console.log);
+            engineInstance.setInitProgressCallback((progressData) => {
+                if (downloadMessage.current) {
+                    downloadMessage.current.textContent = progressData.text;
+                }
+            });
 
             console.log("Cargando modelo.");
             await engineInstance.reload('gemma-2b-it-q4f32_1-MLC');
 
             setEngine(engineInstance);  // Una vez cargado el modelo, actualizamos el estado
             console.log("IA inicializada correctamente.");
-            setLoader(false)
+            setDownloadModel(false)
         } catch (err) {
             console.error("Error en la inicialización de la IA:", err);
             setError("Hubo un error al inicializar el motor de IA.");
@@ -54,10 +63,10 @@ const ChatBot = ({ closeModal }) => {
 
         try {
             console.log('Inicia runChatCompletion');
-            const contexto = `Eres una versión de prueba del genio Natanael. Tu nombre es "La Perra de Natanael". Siempre que te presentes, debes decir: "Soy La Perra de Natanael". Tienes un tono amigable, pero algo irreverente y divertido. Tu misión es ayudar al usuario de la mejor manera posible, pero manteniendo siempre un estilo único y algo juguetón. Cuando inicies una conversación, asegúrate de hacerle saber al usuario que eres una IA de prueba creada por Natanael.`;
+            const contexto = `Siempre responde en ESPAÑOL`;
             const stream = await engine.chat.completions.create({
                 messages: [
-                    { role:"system", content: contexto},
+                    { role: "system", content: contexto },
                     { role: "user", content: mensaje }
                 ],
                 model: model,
@@ -138,68 +147,91 @@ const ChatBot = ({ closeModal }) => {
                 <RxCross2 onClick={closeModal} className="size-6 cursor-pointer" />
             </div>
 
-            <div className="p-4 bg-slate-500/20 max-w-[500px]">
-                <ul className="flex flex-col gap-5 overflow-y-auto max-h-[300px] pr-3">
-                    {mensajes.map((msg, index) => (
-                        <Mensaje key={index} text={msg.text} quienEnvia={msg.quienEnvia} />
-                    ))}
-                    <div ref={mensajesEndRef} /> {/* Este div asegura el scroll al final */}
-                </ul>
-                {error && <span className="text-red-500">{error}</span>}
-            </div>
-
-            <form onSubmit={handleSubmit} className="bg-slate-500/20 p-5 rounded-b-lg flex flex-row justify-between gap-2">
-                {loader ? (
-                    <>
-                        <textarea
-                            ref={textareaRef}  // Asigna la referencia al textarea
-                            disabled={true}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" && !e.shiftKey) {
-                                    e.preventDefault();
-                                    handleSubmit(e);
-                                }
-                            }}
-                            value={mensaje}
-                            onChange={handleInputChange}
-                            rows={4}
-                            placeholder="Espere que genere la respuesta..."
-                            className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
-                        />
-                        <figure className="flex items-center pb-2">
-                            <Hourglass
+            {downloadModel ? (
+                <>
+                    <div className="p-4 bg-gray-800 max-w-[500px] h-[500px] rounded-b-lg">
+                        <ul className="flex flex-col gap-5 w-full h-full justify-center items-center">
+                            <Oval
                                 visible={true}
-                                height="25"
-                                width="25"
-                                ariaLabel="hourglass-loading"
+                                height="80"
+                                width="80"
+                                color="#4fa94d"
+                                ariaLabel="oval-loading"
                                 wrapperStyle={{}}
                                 wrapperClass=""
-                                colors={['#fff', '#fff']}
                             />
-                        </figure>
-                    </>
-                ) : (
-                    <>
-                        <textarea
-                            ref={textareaRef}  // Asigna la referencia al textarea
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" && !e.shiftKey) {
-                                    e.preventDefault();
-                                    handleSubmit(e);
-                                }
-                            }}
-                            value={mensaje}
-                            onChange={handleInputChange}
-                            rows={4}
-                            placeholder="Escribe tu mensaje aquí..."
-                            className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
-                        />
-                        <button type="submit">
-                            <RiSendPlaneFill className="size-6 cursor-pointer" />
-                        </button>
-                    </>
-                )}
-            </form>
+                            <span className="text-center" ref={downloadMessage}></span>
+                        </ul>
+                        {error && <span className="text-red-500">{error}</span>}
+                    </div>
+                </>
+            ) : (
+                <>
+                    <div className="p-4 bg-gray-800 max-w-[500px]">
+                        <ul className="flex flex-col gap-5 overflow-y-auto max-h-[300px] pr-3">
+                            {mensajes.map((msg, index) => (
+                                <Mensaje key={index} text={msg.text} quienEnvia={msg.quienEnvia} />
+                            ))}
+                            <div ref={mensajesEndRef} /> {/* Este div asegura el scroll al final */}
+                        </ul>
+                        {error && <span className="text-red-500">{error}</span>}
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="bg-gray-800 p-5 rounded-b-lg flex flex-row justify-between gap-2">
+                        {loader ? (
+                            <>
+                                <textarea
+                                    ref={textareaRef}  // Asigna la referencia al textarea
+                                    disabled={true}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSubmit(e);
+                                        }
+                                    }}
+                                    value={mensaje}
+                                    onChange={handleInputChange}
+                                    rows={4}
+                                    placeholder="Espere que genere la respuesta..."
+                                    className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
+                                />
+                                <figure className="flex items-center pb-2">
+                                    <Hourglass
+                                        visible={true}
+                                        height="25"
+                                        width="25"
+                                        ariaLabel="hourglass-loading"
+                                        wrapperStyle={{}}
+                                        wrapperClass=""
+                                        colors={['#fff', '#fff']}
+                                    />
+                                </figure>
+                            </>
+                        ) : (
+                            <>
+                                <textarea
+                                    ref={textareaRef}  // Asigna la referencia al textarea
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSubmit(e);
+                                        }
+                                    }}
+                                    value={mensaje}
+                                    onChange={handleInputChange}
+                                    rows={4}
+                                    placeholder="Escribe tu mensaje aquí..."
+                                    className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
+                                />
+                                <button type="submit">
+                                    <RiSendPlaneFill className="size-6 cursor-pointer" />
+                                </button>
+                            </>
+                        )}
+                    </form>
+                </>
+            )}
+
         </div>
     );
 };
