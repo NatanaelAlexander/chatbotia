@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <div className="flex h-screen relative">
       <div className="flex w-full justify-center items-center">
-        <h1>Abre el chat hueon culiao</h1>
+        <h1>Abre el chat para empezar la conversación</h1>
       </div>
       {modal ? (
         <ChatBot closeModal={changeModal} />
