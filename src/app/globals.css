@@ -2,26 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Estilo para la barra de desplazamiento */
+::-webkit-scrollbar {
+    width: 6px;  /* Hace la barra de desplazamiento más delgada */
+    height: 6px; /* Si quieres también personalizar el scroll horizontal */
   }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  
+  /* Estilo para la "manija" (parte que arrastras) del scroll */
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.4);  /* Color opaco */
+    border-radius: 10px;  /* Bordes redondeados */
   }
-}
+  
+  /* Estilo para el área de fondo del scroll */
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);  /* Fondo más claro */
+    border-radius: 10px;  /* Bordes redondeados */
+  }

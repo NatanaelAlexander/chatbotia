@@ -1,0 +1,96 @@
+import { RxCross2 } from "react-icons/rx";
+import { RiSendPlaneFill } from "react-icons/ri";
+import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
+import { useState, useEffect, useRef } from "react";
+import Mensaje from "./Mensaje";
+
+const ChatBot = ({ closeModal }) => {
+    const [mensaje, setMensaje] = useState("");
+    const [error, setError] = useState("");
+    const mensajesEndRef = useRef(null);
+    const [mensajes, setMensajes] = useState([
+        { text: "Hola, ¿en qué puedo ayudarte?", quienEnvia: "Bot" }
+    ]);
+
+    useEffect(() => {
+        // Cuando los mensajes cambian, desplazarse al final
+        mensajesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [mensajes]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (mensaje.trim() === "") {
+            setError("Ingresar mensaje");
+            return;
+        }
+        if (mensaje.trim().toLowerCase().includes("nata")) {
+            setError("El mensaje contiene una palabra prohibida. Queri morir maldito ctm 🔪");
+            return;
+        }
+        if (mensaje.trim().toLowerCase().includes("once")) {
+            setError("Escribiste once? chupalo tonse 😂");
+            return;
+        }
+
+        addMensaje(mensaje, "Tú"); // Agrega el mensaje del usuario
+        setMensaje("");
+
+        // Simula una respuesta del bot después de 1 segundo
+        setTimeout(() => {
+            addMensaje("Esto es una respuesta automática de prueba.", "Bot");
+        }, 1000);
+    };
+
+    const handleInputChange = (e) => {
+        setMensaje(e.target.value);
+        if (mensaje.trim()) setError("");
+    };
+
+    const addMensaje = (text, quienEnvia) => {
+        setMensajes((prev) => [...prev, { text, quienEnvia }]);
+    };
+
+    return (
+        <div className="absolute right-5 rounded-lg bottom-5 w-[400px]">
+            <div className="bg-green-500/70 rounded-t-lg px-5 py-2 flex justify-between items-center">
+                <div className="flex flex-row gap-2 items-center">
+                    <IoChatbubbleEllipsesOutline />
+                    Natanael chat bot IA
+                </div>
+                <RxCross2 onClick={closeModal} className="size-6 cursor-pointer" />
+            </div>
+
+            <div className="p-4 bg-slate-500/20 max-w-[500px]">
+                <ul className="flex flex-col gap-5 overflow-y-auto max-h-[300px] pr-3">
+                    {mensajes.map((msg, index) => (
+                        <Mensaje key={index} text={msg.text} quienEnvia={msg.quienEnvia} />
+                    ))}
+                    <div ref={mensajesEndRef} /> {/* Este div asegura el scroll al final */}
+                </ul>
+                {error && <span className="text-red-500">{error}</span>}
+            </div>
+
+            <form onSubmit={handleSubmit} className="bg-slate-500/20 p-5 rounded-b-lg flex flex-row justify-between gap-2">
+                <textarea
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSubmit(e);
+                        }
+                    }}
+                    value={mensaje}
+                    onChange={handleInputChange}
+                    rows={4}
+                    placeholder="Escribe tu mensaje aquí..."
+                    className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
+                />
+                <button type="submit">
+                    <RiSendPlaneFill className="size-6 cursor-pointer" />
+                </button>
+            </form>
+        </div>
+    );
+};
+
+export default ChatBot;
