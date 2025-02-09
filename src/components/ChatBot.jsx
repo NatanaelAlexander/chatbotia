@@ -3,13 +3,14 @@ import { RiSendPlaneFill } from "react-icons/ri";
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { useState, useEffect, useRef } from "react";
 import Mensaje from "./Mensaje";
+import { Hourglass } from 'react-loader-spinner'
 
 const ChatBot = ({ closeModal }) => {
     const [mensaje, setMensaje] = useState("");
     const [error, setError] = useState("");
     const mensajesEndRef = useRef(null);
     const textareaRef = useRef(null);  // Referencia para el textarea
-    const [loader, setLoader] = useState(false);
+    const [loader, setLoader] = useState(true);
     const [mensajes, setMensajes] = useState([
         { text: "Hola, ¿en qué puedo ayudarte?", quienEnvia: "Bot" }
     ]);
@@ -98,7 +99,15 @@ const ChatBot = ({ closeModal }) => {
                             className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
                         />
                         <figure className="flex items-center pb-2">
-                            cargando...
+                            <Hourglass
+                                visible={true}
+                                height="30"
+                                width="30"
+                                ariaLabel="hourglass-loading"
+                                wrapperStyle={{}}
+                                wrapperClass=""
+                                colors={['#fff', '#fff']}
+                            />
                         </figure>
                     </>
                 ) : (
