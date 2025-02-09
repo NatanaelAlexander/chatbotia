@@ -54,15 +54,18 @@ const ChatBot = ({ closeModal }) => {
 
         try {
             console.log('Inicia runChatCompletion');
+            const contexto = `Eres una versión de prueba del genio Natanael. Tu nombre es "La Perra de Natanael". Siempre que te presentes, debes decir: "Soy La Perra de Natanael". Tienes un tono amigable, pero algo irreverente y divertido. Tu misión es ayudar al usuario de la mejor manera posible, pero manteniendo siempre un estilo único y algo juguetón. Cuando inicies una conversación, asegúrate de hacerle saber al usuario que eres una IA de prueba creada por Natanael.`;
             const stream = await engine.chat.completions.create({
-                messages: [{ role: "user", content: mensaje }],
+                messages: [
+                    { role:"system", content: contexto},
+                    { role: "user", content: mensaje }
+                ],
                 model: model,
                 stream: true
             });
 
             let respuesta = '';
             for await (const response of stream) {
-                console.log("Respuesta del stream:", response);  // Verifica que la respuesta esté llegando correctamente
                 for (const choice of response.choices) {
                     if (choice.delta.content)
                         respuesta += choice.delta.content
@@ -70,7 +73,7 @@ const ChatBot = ({ closeModal }) => {
             }
             addMensaje(respuesta, "Bot");
 
-            setLoader(false); // Deshabilitar el loader después de recibir la respuesta
+            setLoader(false);
         } catch (err) {
             console.error('Error en runChatCompletion:', err);
             setError(`Hubo un error al obtener la respuesta: ${err.message || err}`);
@@ -126,7 +129,7 @@ const ChatBot = ({ closeModal }) => {
     };
 
     return (
-        <div className="absolute right-5 rounded-lg bottom-5 w-[400px]">
+        <div className="absolute right-5 rounded-lg bottom-5 w-[400px] z-20">
             <div className="bg-green-500/70 rounded-t-lg px-5 py-2 flex justify-between items-center">
                 <div className="flex flex-row gap-2 items-center">
                     <IoChatbubbleEllipsesOutline />
