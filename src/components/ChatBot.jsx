@@ -10,7 +10,7 @@ const ChatBot = ({ closeModal }) => {
     const [error, setError] = useState("");
     const mensajesEndRef = useRef(null);
     const textareaRef = useRef(null);  // Referencia para el textarea
-    const [loader, setLoader] = useState(true);
+    const [loader, setLoader] = useState(false);
     const [mensajes, setMensajes] = useState([
         { text: "Hola, ¿en qué puedo ayudarte?", quienEnvia: "Bot" }
     ]);
@@ -101,8 +101,8 @@ const ChatBot = ({ closeModal }) => {
                         <figure className="flex items-center pb-2">
                             <Hourglass
                                 visible={true}
-                                height="30"
-                                width="30"
+                                height="25"
+                                width="25"
                                 ariaLabel="hourglass-loading"
                                 wrapperStyle={{}}
                                 wrapperClass=""
