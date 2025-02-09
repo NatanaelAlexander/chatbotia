@@ -195,42 +195,59 @@ const ChatBot = ({ closeModal }) => {
                         </ul>
                         {error && <span className="text-red-500">{error}</span>}
                     </div>
-                    <form onSubmit={handleSubmit} className="bg-gray-800 p-5 rounded-b-lg flex flex-row justify-between gap-2">
+                    <form onSubmit={handleSubmit} className="bg-gray-800 p-5 rounded-b-lg flex flex-row justify-between items-start gap-2">
                         {loader ? (
-                            <textarea
-                                ref={textareaRef}
-                                disabled={true}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter" && !e.shiftKey) {
-                                        e.preventDefault();
-                                        handleSubmit(e);
-                                    }
-                                }}
-                                value={mensaje}
-                                onChange={handleInputChange}
-                                rows={4}
-                                placeholder="Espere que genere la respuesta..."
-                                className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
-                            />
+                            <>
+                                <textarea
+                                    ref={textareaRef}
+                                    disabled={true}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSubmit(e);
+                                        }
+                                    }}
+                                    value={mensaje}
+                                    onChange={handleInputChange}
+                                    rows={4}
+                                    placeholder="Espere que genere la respuesta..."
+                                    className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
+                                />
+
+                                <Hourglass
+                                    visible={true}
+                                    height="25"
+                                    width="25"
+                                    ariaLabel="hourglass-loading"
+                                    wrapperStyle={{}}
+                                    wrapperClass=""
+                                    colors={['#fff', '#fff']}
+                                />
+
+                            </>
                         ) : (
-                            <textarea
-                                ref={textareaRef}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter" && !e.shiftKey) {
-                                        e.preventDefault();
-                                        handleSubmit(e);
-                                    }
-                                }}
-                                value={mensaje}
-                                onChange={handleInputChange}
-                                rows={4}
-                                placeholder="Escribe tu mensaje aquí..."
-                                className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
-                            />
+                            <>
+                                <textarea
+                                    ref={textareaRef}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleSubmit(e);
+                                        }
+                                    }}
+                                    value={mensaje}
+                                    onChange={handleInputChange}
+                                    rows={4}
+                                    placeholder="Escribe tu mensaje aquí..."
+                                    className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
+                                />
+
+                                <button type="submit">
+                                    <RiSendPlaneFill className="size-6 cursor-pointer" />
+                                </button>
+
+                            </>
                         )}
-                        <button type="submit">
-                            <RiSendPlaneFill className="size-6 cursor-pointer" />
-                        </button>
                     </form>
                 </>
             )}
