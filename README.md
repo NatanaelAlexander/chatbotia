@@ -34,7 +34,7 @@ This will start the development server, and you can view the application at `htt
 
 ## Build
 
-To build the project for production, run:
+To build the project for production, run on: https://natanael-chat-bot-ia.vercel.app/
 
 ```bash
 npm run build

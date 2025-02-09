@@ -3,11 +3,14 @@ import { RiSendPlaneFill } from "react-icons/ri";
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { useState, useEffect, useRef } from "react";
 import Mensaje from "./Mensaje";
+import { Hourglass } from 'react-loader-spinner'
 
 const ChatBot = ({ closeModal }) => {
     const [mensaje, setMensaje] = useState("");
     const [error, setError] = useState("");
     const mensajesEndRef = useRef(null);
+    const textareaRef = useRef(null);  // Referencia para el textarea
+    const [loader, setLoader] = useState(false);
     const [mensajes, setMensajes] = useState([
         { text: "Hola, ¿en qué puedo ayudarte?", quienEnvia: "Bot" }
     ]);
@@ -16,6 +19,11 @@ const ChatBot = ({ closeModal }) => {
         // Cuando los mensajes cambian, desplazarse al final
         mensajesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [mensajes]);
+
+    useEffect(() => {
+        // Asegurarse de que el textarea tenga siempre el foco
+        textareaRef.current?.focus();
+    }, [loader]);  // El foco se da siempre que el loader cambie
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -28,17 +36,18 @@ const ChatBot = ({ closeModal }) => {
             setError("El mensaje contiene una palabra prohibida. Queri morir maldito ctm 🔪");
             return;
         }
-        if (mensaje.trim().toLowerCase().includes("once")) {
+        if (mensaje.trim().toLowerCase().includes("once") || mensaje.includes(11)) {
             setError("Escribiste once? chupalo tonse 😂");
             return;
         }
-
+        setLoader(true);
         addMensaje(mensaje, "Tú"); // Agrega el mensaje del usuario
         setMensaje("");
 
         // Simula una respuesta del bot después de 1 segundo
         setTimeout(() => {
             addMensaje("Esto es una respuesta automática de prueba.", "Bot");
+            setLoader(false);
         }, 1000);
     };
 
@@ -72,22 +81,56 @@ const ChatBot = ({ closeModal }) => {
             </div>
 
             <form onSubmit={handleSubmit} className="bg-slate-500/20 p-5 rounded-b-lg flex flex-row justify-between gap-2">
-                <textarea
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSubmit(e);
-                        }
-                    }}
-                    value={mensaje}
-                    onChange={handleInputChange}
-                    rows={4}
-                    placeholder="Escribe tu mensaje aquí..."
-                    className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
-                />
-                <button type="submit">
-                    <RiSendPlaneFill className="size-6 cursor-pointer" />
-                </button>
+                {loader ? (
+                    <>
+                        <textarea
+                            ref={textareaRef}  // Asigna la referencia al textarea
+                            disabled={true}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleSubmit(e);
+                                }
+                            }}
+                            value={mensaje}
+                            onChange={handleInputChange}
+                            rows={4}
+                            placeholder="Espere que genere la respuesta..."
+                            className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
+                        />
+                        <figure className="flex items-center pb-2">
+                            <Hourglass
+                                visible={true}
+                                height="25"
+                                width="25"
+                                ariaLabel="hourglass-loading"
+                                wrapperStyle={{}}
+                                wrapperClass=""
+                                colors={['#fff', '#fff']}
+                            />
+                        </figure>
+                    </>
+                ) : (
+                    <>
+                        <textarea
+                            ref={textareaRef}  // Asigna la referencia al textarea
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleSubmit(e);
+                                }
+                            }}
+                            value={mensaje}
+                            onChange={handleInputChange}
+                            rows={4}
+                            placeholder="Escribe tu mensaje aquí..."
+                            className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
+                        />
+                        <button type="submit">
+                            <RiSendPlaneFill className="size-6 cursor-pointer" />
+                        </button>
+                    </>
+                )}
             </form>
         </div>
     );
