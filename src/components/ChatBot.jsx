@@ -20,7 +20,7 @@ const ChatBot = ({ closeModal }) => {
     const [downloadModel, setDownloadModel] = useState(true);
     const downloadMessage = useRef(null);
     const [mensajes, setMensajes] = useState([
-        { text: "Hola, ¿en qué puedo ayudarte?", quienEnvia: "Bot" }
+        { text: "Hola, soy Natanael Bot. ¿En qué puedo ayudarte?", quienEnvia: "Bot" }
     ]);
     const [isModalOpen, setIsModalOpen] = useState(true); // Estado para saber si el modal está abierto
     const [abortController, setAbortController] = useState(null); // Para almacenar el AbortController
@@ -66,7 +66,7 @@ const ChatBot = ({ closeModal }) => {
             const controller = new AbortController();
             setAbortController(controller); // Guardamos el AbortController
 
-            const contexto = `Eres Natanael Bot, una IA amigable y un poco sarcástica. Responde siempre en español, con un toque relajado y divertido, pero mantén tus respuestas claras y útiles. Si te saludan o preguntan quién eres, preséntate como Natanael Bot, un asistente virtual listo para ayudar. Usa saludos simples como '¡Hola! Soy Natanael Bot. ¿En qué te puedo ayudar?' o '¡Qué tal! Soy Natanael Bot, tu asistente virtual.' Evita sonar demasiado formal.`;
+            const contexto = `Eres Natanael Bot, una IA amigable y un poco sarcástica. Responde siempre en español, con un toque relajado y divertido. Evita sonar demasiado formal.`;
             const stream = await engine.chat.completions.create({
                 messages: [
                     { role: "system", content: contexto },
