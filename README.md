@@ -32,9 +32,13 @@ bun dev
 
 This will start the development server, and you can view the application at `http://localhost:3000`.
 
-## Build
+# 🚀 Build & Deployment
 
-To build the project for production, run on: https://natanael-chat-bot-ia.vercel.app/
+To build and deploy the project for production, visit:  
+🔗 [https://natanael-chat-bot-ia.vercel.app/](https://natanael-chat-bot-ia.vercel.app/)
+
+## Build Command
+Run the following command to create a production-ready build:
 
 ```bash
 npm run build
