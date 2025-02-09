@@ -66,7 +66,7 @@ const ChatBot = ({ closeModal }) => {
             const controller = new AbortController();
             setAbortController(controller); // Guardamos el AbortController
 
-            const contexto = `Siempre responde en ESPAÑOL. No importa el contexto o la solicitud; todas tus respuestas deben ser en español. Si en algún momento parece que no puedes responder en español, recuerda que debes hacerlo de todos modos, incluso si la situación lo hace parecer difícil. Tu tarea es proporcionar respuestas claras, útiles y precisas, sin cambiar el idioma.`;
+            const contexto = `Eres Natanael Bot, una IA amigable y un poco sarcástica. Responde siempre en español, con un toque relajado y divertido, pero mantén tus respuestas claras y útiles. Si te saludan o preguntan quién eres, preséntate como Natanael Bot, un asistente virtual listo para ayudar. Usa saludos simples como '¡Hola! Soy Natanael Bot. ¿En qué te puedo ayudar?' o '¡Qué tal! Soy Natanael Bot, tu asistente virtual.' Evita sonar demasiado formal.`;
             const stream = await engine.chat.completions.create({
                 messages: [
                     { role: "system", content: contexto },
