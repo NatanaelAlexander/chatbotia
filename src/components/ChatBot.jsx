@@ -1,9 +1,13 @@
+'use client'
 import { RxCross2 } from "react-icons/rx";
 import { RiSendPlaneFill } from "react-icons/ri";
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { useState, useEffect, useRef } from "react";
 import Mensaje from "./Mensaje";
 import { Hourglass } from 'react-loader-spinner'
+/* La IA */
+import { MLCEngine } from "@mlc-ai/web-llm";
+
 
 const ChatBot = ({ closeModal }) => {
     const [mensaje, setMensaje] = useState("");
@@ -11,9 +15,69 @@ const ChatBot = ({ closeModal }) => {
     const mensajesEndRef = useRef(null);
     const textareaRef = useRef(null);  // Referencia para el textarea
     const [loader, setLoader] = useState(false);
+    const [engine, setEngine] = useState()
+    const [model, setModel] = useState()
     const [mensajes, setMensajes] = useState([
         { text: "Hola, ¿en qué puedo ayudarte?", quienEnvia: "Bot" }
     ]);
+
+    useEffect(() => {
+        modelIa()
+    }, [])
+
+    const modelIa = async () => {
+        try {
+            setLoader(true)
+            setModel('gemma-2b-it-q4f32_1-MLC');
+            const engineInstance = new MLCEngine();
+            setEngine(engineInstance);
+            engineInstance.setInitProgressCallback(console.log);
+
+            console.log("Cargando modelo.");
+            await engineInstance.reload('gemma-2b-it-q4f32_1-MLC');
+
+            setEngine(engineInstance);  // Una vez cargado el modelo, actualizamos el estado
+            console.log("IA inicializada correctamente.");
+            setLoader(false)
+        } catch (err) {
+            console.error("Error en la inicialización de la IA:", err);
+            setError("Hubo un error al inicializar el motor de IA.");
+        }
+    };
+
+    const runChatCompletion = async () => {
+        if (!engine) {
+            console.log("El motor IA no está listo.");
+            setError("El motor de IA no está listo.");
+            return;
+        }
+
+        try {
+            console.log('Inicia runChatCompletion');
+            const stream = await engine.chat.completions.create({
+                messages: [{ role: "user", content: mensaje }],
+                model: model,
+                stream: true
+            });
+
+            let respuesta = '';
+            for await (const response of stream) {
+                console.log("Respuesta del stream:", response);  // Verifica que la respuesta esté llegando correctamente
+                for (const choice of response.choices) {
+                    if (choice.delta.content)
+                        respuesta += choice.delta.content
+                }
+            }
+            addMensaje(respuesta, "Bot");
+
+            setLoader(false); // Deshabilitar el loader después de recibir la respuesta
+        } catch (err) {
+            console.error('Error en runChatCompletion:', err);
+            setError(`Hubo un error al obtener la respuesta: ${err.message || err}`);
+        }
+    };
+
+
 
     useEffect(() => {
         // Cuando los mensajes cambian, desplazarse al final
@@ -45,10 +109,11 @@ const ChatBot = ({ closeModal }) => {
         setMensaje("");
 
         // Simula una respuesta del bot después de 1 segundo
-        setTimeout(() => {
+        /* setTimeout(() => {
             addMensaje("Esto es una respuesta automática de prueba.", "Bot");
             setLoader(false);
-        }, 1000);
+        }, 1000); */
+        runChatCompletion()
     };
 
     const handleInputChange = (e) => {
