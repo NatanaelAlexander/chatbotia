@@ -3,7 +3,6 @@ import { RiSendPlaneFill } from "react-icons/ri";
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { useState, useEffect, useRef } from "react";
 import Mensaje from "./Mensaje";
-import { cardio } from 'ldrs'
 
 const ChatBot = ({ closeModal }) => {
     const [mensaje, setMensaje] = useState("");
@@ -14,8 +13,6 @@ const ChatBot = ({ closeModal }) => {
     const [mensajes, setMensajes] = useState([
         { text: "Hola, ¿en qué puedo ayudarte?", quienEnvia: "Bot" }
     ]);
-
-    cardio.register();
 
     useEffect(() => {
         // Cuando los mensajes cambian, desplazarse al final
@@ -101,12 +98,7 @@ const ChatBot = ({ closeModal }) => {
                             className="w-full text-black p-2 rounded-lg resizable-textarea max-h-[200px]"
                         />
                         <figure className="flex items-center pb-2">
-                            <l-cardio
-                                size="40"
-                                stroke="4"
-                                speed="2"
-                                color="white"
-                            ></l-cardio>
+                            cargando...
                         </figure>
                     </>
                 ) : (
