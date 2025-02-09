@@ -33,7 +33,7 @@ const ChatBot = ({ closeModal }) => {
     const modelIa = async () => {
         try {
             setDownloadModel(true);
-            setModel('gemma-2b-it-q4f32_1-MLC');
+            setModel('Llama-3.2-1B-Instruct-q4f32_1-MLC');
             const engineInstance = new MLCEngine();
             setEngine(engineInstance);
             engineInstance.setInitProgressCallback((progressData) => {
@@ -43,7 +43,7 @@ const ChatBot = ({ closeModal }) => {
             });
 
             console.log("Cargando modelo.");
-            await engineInstance.reload('gemma-2b-it-q4f32_1-MLC');
+            await engineInstance.reload('Llama-3.2-1B-Instruct-q4f32_1-MLC');
             setEngine(engineInstance);
             console.log("IA inicializada correctamente.");
             setDownloadModel(false);
